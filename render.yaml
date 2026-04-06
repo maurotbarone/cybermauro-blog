@@ -1,0 +1,38 @@
+services:
+  # Backend API Service
+  - type: web
+    name: mern-blog-backend
+    runtime: node
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGODB_URI
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: CLIENT_URL
+        fromService:
+          type: web
+          name: mern-blog-frontend
+          property: host
+
+  # Frontend Static Site
+  - type: web
+    name: mern-blog-frontend
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./build
+    envVars:
+      - key: REACT_APP_API_URL
+        fromService:
+          type: web
+          name: mern-blog-backend
+          property: host
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
