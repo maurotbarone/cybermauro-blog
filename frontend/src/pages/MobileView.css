@@ -50,13 +50,11 @@
   border-radius: 20px;
   font-size: 1rem;
   font-weight: 500;
-  color: var(--muted);
-  border: 1px solid var(--border);
+  color: var(--chip-color, var(--muted));
+  border: 1.5px solid var(--chip-color, var(--border));
   white-space: nowrap;
   transition: all 0.2s;
   background: transparent;
-  flex: 1 1 0;
-  min-width: 0;
   text-align: center;
 }
 .topic-chip.active {

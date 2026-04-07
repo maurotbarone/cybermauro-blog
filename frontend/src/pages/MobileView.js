@@ -48,7 +48,7 @@ const MobileView = ({ onPostClick, returnToTopicSlug }) => {
           <button
             key={t._id}
             className={`topic-chip ${t.slug === activeTopicSlug ? 'active' : ''}`}
-            style={t.slug === activeTopicSlug ? { background: t.color } : {}}
+            style={{ '--chip-color': t.color, ...(t.slug === activeTopicSlug ? { background: t.color } : {}) }}
             onClick={() => setActiveTopicSlug(t.slug)}
           >
             {t.emoji} {t.name}
