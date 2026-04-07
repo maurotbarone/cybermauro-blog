@@ -1,31 +1,22 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTopics, usePosts } from '../hooks/useApi';
 import PostCard from '../components/PostCard';
 import './MobileView.css';
 
-const MobileView = ({ onPostClick }) => {
-  const { topics, loading: topicsLoading } = useTopics();
-  const [topicIndex, setTopicIndex] = useState(0);
+const MobileView = ({ onPostClick, returnToTopicSlug }) => {
+  const { topics } = useTopics();
+  // Initialize directly from returnToTopicSlug if available, so the first fetch is always correct
+  const [activeTopicSlug, setActiveTopicSlug] = useState(returnToTopicSlug || undefined);
 
-  const activeSlug = topics[topicIndex]?.slug;
-  const { data, loading: postsLoading } = usePosts(activeSlug);
-
-  // Horizontal swipe for topics
-  const topicSwipeRef = useRef(null);
-  const topicStartX = useRef(null);
-
-  const onTopicTouchStart = (e) => { topicStartX.current = e.touches[0].clientX; };
-  const onTopicTouchEnd = (e) => {
-    if (topicStartX.current === null) return;
-    const dx = topicStartX.current - e.changedTouches[0].clientX;
-    if (Math.abs(dx) > 50) {
-      if (dx > 0 && topicIndex < topics.length - 1) setTopicIndex(i => i + 1);
-      if (dx < 0 && topicIndex > 0) setTopicIndex(i => i - 1);
+  // Once topics load, default to first topic if no slug is set yet
+  useEffect(() => {
+    if (topics.length > 0 && !activeTopicSlug) {
+      setActiveTopicSlug(topics[0].slug);
     }
-    topicStartX.current = null;
-  };
+  }, [topics, activeTopicSlug]);
 
-  const topic = topics[topicIndex];
+  const { data, loading: postsLoading } = usePosts(activeTopicSlug);
+  const topic = topics.find(t => t.slug === activeTopicSlug);
 
   return (
     <div className="mobile-view">
@@ -35,59 +26,25 @@ const MobileView = ({ onPostClick }) => {
         <button className="mobile-menu-btn">☰</button>
       </header>
 
-      {/* Topic indicator - swipe hint */}
-      <div
-        className="topic-strip"
-        onTouchStart={onTopicTouchStart}
-        onTouchEnd={onTopicTouchEnd}
-        ref={topicSwipeRef}
-      >
-        {topics.map((t, i) => (
+      {/* Topic chips */}
+      <div className="topic-strip">
+        {topics.map(t => (
           <button
             key={t._id}
-            className={`topic-chip ${i === topicIndex ? 'active' : ''}`}
-            style={i === topicIndex ? { background: t.color } : {}}
-            onClick={() => setTopicIndex(i)}
+            className={`topic-chip ${t.slug === activeTopicSlug ? 'active' : ''}`}
+            style={t.slug === activeTopicSlug ? { background: t.color } : {}}
+            onClick={() => setActiveTopicSlug(t.slug)}
           >
             {t.emoji} {t.name}
           </button>
         ))}
       </div>
 
-      {/* Topic header with swipe zone */}
-      <div
-        className="mobile-topic-header"
-        style={{ '--color': topic?.color || 'var(--accent)' }}
-        onTouchStart={onTopicTouchStart}
-        onTouchEnd={onTopicTouchEnd}
-      >
-        <div className="topic-header-content">
-          <span className="topic-emoji-lg">{topic?.emoji}</span>
-          <div>
-            <h2>{topic?.name || 'Loading...'}</h2>
-            <p>{topic?.description}</p>
-          </div>
-        </div>
-        <div className="swipe-hint">
-          {topicIndex > 0 && <span className="swipe-arrow left">‹</span>}
-          <span className="topic-dots">
-            {topics.map((_, i) => (
-              <span key={i} className={`dot ${i === topicIndex ? 'active' : ''}`} />
-            ))}
-          </span>
-          {topicIndex < topics.length - 1 && <span className="swipe-arrow right">›</span>}
-        </div>
-      </div>
-
       {/* Posts - vertical scroll */}
-      <div
-        className="mobile-posts"
-        onTouchStart={onTopicTouchStart}
-        onTouchEnd={onTopicTouchEnd}
-      >
+      <div className="mobile-posts">
         {postsLoading ? (
           <div className="mobile-loading">
-            {Array(3).fill(0).map((_, i) => (
+            {Array(4).fill(0).map((_, i) => (
               <div key={i} className="mobile-skeleton" />
             ))}
           </div>

@@ -21,9 +21,11 @@ function App() {
   const [selectedPost, setSelectedPost] = useState(null);
   const [sharePost, setSharePost] = useState(null);
   const [view, setView] = useState('list'); // 'list' | 'detail'
+  const [activeTopicSlug, setActiveTopicSlug] = useState(null);
 
   const handlePostClick = (post) => {
     setSelectedPost(post);
+    setActiveTopicSlug(post.topic?.slug || null);
     setView('detail');
     window.scrollTo(0, 0);
   };
@@ -42,7 +44,7 @@ function App() {
       <div className={`app ${isMobile ? 'is-mobile' : 'is-desktop'}`}>
         {view === 'list' && (
           isMobile
-            ? <MobileView onPostClick={handlePostClick} />
+            ? <MobileView onPostClick={handlePostClick} returnToTopicSlug={activeTopicSlug} />
             : <DesktopView onPostClick={handlePostClick} />
         )}
         {view === 'detail' && selectedPost && (

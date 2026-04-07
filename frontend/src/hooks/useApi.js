@@ -9,6 +9,8 @@ export const usePosts = (topicSlug, page = 1) => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    // undefined = not ready yet (topics still loading); null = explicit "All"
+    if (topicSlug === undefined) return;
     setLoading(true);
     const url = topicSlug
       ? `${API}/api/posts/topic/${topicSlug}?page=${page}&limit=12`
