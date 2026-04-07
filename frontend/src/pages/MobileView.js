@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useTopics, usePosts } from '../hooks/useApi';
 import PostCard from '../components/PostCard';
 import './MobileView.css';
@@ -17,6 +17,22 @@ const MobileView = ({ onPostClick, returnToTopicSlug }) => {
 
   const { data, loading: postsLoading } = usePosts(activeTopicSlug);
   const topic = topics.find(t => t.slug === activeTopicSlug);
+  const topicIndex = topics.findIndex(t => t.slug === activeTopicSlug);
+
+  // Swipe to navigate between topics
+  const swipeStartX = useRef(null);
+  const onTouchStart = (e) => { swipeStartX.current = e.touches[0].clientX; };
+  const onTouchEnd = (e) => {
+    if (swipeStartX.current === null || topics.length === 0) return;
+    const dx = swipeStartX.current - e.changedTouches[0].clientX;
+    if (Math.abs(dx) > 50) {
+      const nextIndex = dx > 0 ? topicIndex + 1 : topicIndex - 1;
+      if (nextIndex >= 0 && nextIndex < topics.length) {
+        setActiveTopicSlug(topics[nextIndex].slug);
+      }
+    }
+    swipeStartX.current = null;
+  };
 
   return (
     <div className="mobile-view">
@@ -40,8 +56,8 @@ const MobileView = ({ onPostClick, returnToTopicSlug }) => {
         ))}
       </div>
 
-      {/* Posts - vertical scroll */}
-      <div className="mobile-posts">
+      {/* Posts - vertical scroll, swipe left/right to change topic */}
+      <div className="mobile-posts" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
         {postsLoading ? (
           <div className="mobile-loading">
             {Array(4).fill(0).map((_, i) => (
