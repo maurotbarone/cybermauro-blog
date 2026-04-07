@@ -46,9 +46,9 @@
 }
 
 .topic-chip {
-  padding: 0.3rem 0.65rem;
+  padding: 0.25rem 0.5rem;
   border-radius: 20px;
-  font-size: clamp(0.6rem, 2.2vw, 0.8rem);
+  font-size: 0.8rem;
   font-weight: 500;
   color: var(--muted);
   border: 1px solid var(--border);
