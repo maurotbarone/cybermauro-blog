@@ -81,12 +81,12 @@
   background: var(--bg2);
   border: 1px solid var(--border);
   flex-shrink: 0;
-  height: 130px;
+  height: 175px;
 }
 
 .mobile-card-wrap .post-card.mobile {
   position: relative;
-  height: 130px;
+  height: 175px;
 }
 
 /* Horizontal layout overrides */
@@ -96,8 +96,8 @@
 }
 
 .mobile-card-wrap .post-card.mobile .card-image {
-  width: 120px;
-  height: 130px;
+  width: 130px;
+  height: 175px;
   aspect-ratio: unset;
   flex-shrink: 0;
 }
@@ -114,7 +114,7 @@
 }
 
 .mobile-card-wrap .post-card.mobile .card-title {
-  font-size: 0.9rem;
+  font-size: 1.05rem;
   -webkit-line-clamp: 2;
   line-clamp: 2;
 }
@@ -124,7 +124,7 @@
 }
 
 .mobile-card-wrap .post-card.mobile .card-summary {
-  font-size: 0.88rem;
+  font-size: 0.95rem;
   -webkit-line-clamp: 2;
   line-clamp: 2;
   flex: unset;
@@ -156,7 +156,7 @@
 }
 
 .mobile-skeleton {
-  height: 130px;
+  height: 175px;
   background: var(--bg2);
   border-radius: var(--radius);
   animation: pulse 1.5s ease infinite;
