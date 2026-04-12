@@ -1,7 +1,7 @@
 services:
   # Backend API Service
   - type: web
-    name: cybermauro-blog
+    name: cybermauro-backend
     runtime: node
     rootDir: backend
     buildCommand: npm install
@@ -14,17 +14,17 @@ services:
       - key: JWT_SECRET
         generateValue: true
       - key: CLIENT_URL
-        value: https://cybermauro-blog-1.onrender.com
+        value: https://cybermauro-frontend.onrender.com
 
   # Frontend Static Site
   - type: static
-    name: cybermauro-blog-1
+    name: cybermauro-frontend
     rootDir: frontend
     buildCommand: npm install && npm run build
     staticPublishPath: ./build
     envVars:
       - key: REACT_APP_API_URL
-        value: https://cybermauro-blog.onrender.com
+        value: https://cybermauro-backend.onrender.com
     routes:
       - type: rewrite
         source: /*
