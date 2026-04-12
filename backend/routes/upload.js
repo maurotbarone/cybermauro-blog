@@ -11,7 +11,15 @@ cloudinary.config({
 });
 
 const storage = multer.memoryStorage();
-const upload = multer({ storage, limits: { fileSize: 5 * 1024 * 1024 } });
+const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+const upload = multer({
+  storage,
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: (_req, file, cb) => {
+    const allowed = allowedMimeTypes.includes(file.mimetype);
+    cb(allowed ? null : new Error('Only JPEG, PNG, WebP and GIF images are allowed'), allowed);
+  }
+});
 
 router.post('/', auth, upload.single('image'), async (req, res) => {
   try {
