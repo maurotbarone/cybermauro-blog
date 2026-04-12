@@ -1,28 +1,37 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import './PostCard.css';
 
 const PostCard = ({ post, onClick, isMobile }) => {
-  const [flipped, setFlipped] = useState(false);
-  const [flipStartX, setFlipStartX] = useState(null);
+  const [expanding, setExpanding] = useState(false);
+  const [expanded, setExpanded] = useState(false);
+  const [rect, setRect] = useState(null);
+  const cardRef = useRef(null);
 
   const handleClick = () => {
     if (isMobile) {
-      setFlipped(true);
-      setTimeout(() => {
-        setFlipped(false);
-        onClick(post);
-      }, 400);
+      const r = cardRef.current.getBoundingClientRect();
+      setRect(r);
+      setExpanding(true);
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => setExpanded(true));
+      });
+      setTimeout(() => onClick(post), 420);
     } else {
       onClick(post);
     }
   };
 
+  const coverBg = post.coverImage
+    ? `url(${post.coverImage})`
+    : post.topic?.color || '#6c63ff';
+
   return (
-    <div
-      className={`post-card ${flipped ? 'flipping' : ''} ${isMobile ? 'mobile' : 'desktop'}`}
-      onClick={handleClick}
-    >
-      <div className="card-inner">
+    <>
+      <div
+        ref={cardRef}
+        className={`post-card ${isMobile ? 'mobile' : 'desktop'}`}
+        onClick={handleClick}
+      >
         <div className="card-front">
           <div className="card-image">
             {post.coverImage
@@ -58,14 +67,32 @@ const PostCard = ({ post, onClick, isMobile }) => {
             </div>
           </div>
         </div>
-        <div className="card-back">
-          <div className="card-back-content">
-            <span className="card-back-icon">✨</span>
-            <p>Opening article...</p>
+      </div>
+
+      {/* Expansion overlay */}
+      {expanding && rect && (
+        <div
+          className={`card-expand-overlay ${expanded ? 'expanded' : ''}`}
+          style={{
+            '--start-top': `${rect.top}px`,
+            '--start-left': `${rect.left}px`,
+            '--start-width': `${rect.width}px`,
+            '--start-height': `${rect.height}px`,
+            '--start-radius': '16px',
+            backgroundImage: post.coverImage ? `url(${post.coverImage})` : undefined,
+            backgroundColor: !post.coverImage ? (post.topic?.color || '#6c63ff') : undefined,
+          }}
+        >
+          <div className={`card-expand-text ${expanded ? 'visible' : ''}`}>
+            <div className="card-expand-badge" style={{ background: post.topic?.color }}>
+              {post.topic?.emoji} {post.topic?.name}
+            </div>
+            <h2 className="card-expand-title">{post.title}</h2>
+            <p className="card-expand-summary">{post.summary}</p>
           </div>
         </div>
-      </div>
-    </div>
+      )}
+    </>
   );
 };
 

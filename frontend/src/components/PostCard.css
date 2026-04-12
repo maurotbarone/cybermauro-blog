@@ -1,6 +1,5 @@
 .post-card {
   cursor: pointer;
-  perspective: 1000px;
   transition: transform 0.2s ease;
 }
 
@@ -18,47 +17,11 @@
   flex-shrink: 0;
 }
 
-.card-inner {
+.card-front {
   position: relative;
   width: 100%;
   height: 100%;
-  transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-  transform-style: preserve-3d;
 }
-
-.post-card.flipping .card-inner {
-  transform: rotateY(180deg);
-}
-
-.card-front, .card-back {
-  position: relative;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-}
-
-.post-card.mobile .card-front,
-.post-card.mobile .card-back {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-}
-
-.card-back {
-  transform: rotateY(180deg);
-  background: var(--accent);
-  border-radius: var(--radius);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.card-back-content {
-  text-align: center;
-  font-size: 1.2rem;
-  color: white;
-}
-
-.card-back-icon { font-size: 3rem; display: block; margin-bottom: 0.5rem; }
 
 /* Desktop card styling */
 .post-card.desktop .card-front {
@@ -211,4 +174,89 @@
   font-size: 0.8rem;
   color: var(--accent);
   font-weight: 500;
+}
+
+/* ─── EXPAND OVERLAY ─── */
+.card-expand-overlay {
+  position: fixed;
+  z-index: 999;
+  background-size: cover;
+  background-position: center;
+  overflow: hidden;
+
+  /* Start: card position */
+  top: var(--start-top);
+  left: var(--start-left);
+  width: var(--start-width);
+  height: var(--start-height);
+  border-radius: var(--start-radius);
+
+  transition:
+    top 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    left 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    width 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    height 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    border-radius 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* End: full screen */
+.card-expand-overlay.expanded {
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100dvh;
+  border-radius: 0;
+}
+
+/* Dark overlay on image */
+.card-expand-overlay::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.65) 100%);
+}
+
+/* Text inside overlay */
+.card-expand-text {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1;
+  padding: 32px 24px;
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.2s ease 0.2s, transform 0.2s ease 0.2s;
+}
+
+.card-expand-text.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.card-expand-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 12px;
+}
+
+.card-expand-title {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: white;
+  line-height: 1.2;
+  margin-bottom: 10px;
+}
+
+.card-expand-summary {
+  font-size: 0.9rem;
+  color: rgba(255,255,255,0.8);
+  line-height: 1.5;
 }
