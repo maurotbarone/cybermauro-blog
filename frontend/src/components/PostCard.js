@@ -1,36 +1,12 @@
-import React, { useState, useRef } from 'react';
+import React from 'react';
 import './PostCard.css';
 
 const PostCard = ({ post, onClick, isMobile }) => {
-  const [expanding, setExpanding] = useState(false);
-  const [expanded, setExpanded] = useState(false);
-  const [rect, setRect] = useState(null);
-  const cardRef = useRef(null);
-
-  const handleClick = () => {
-    if (isMobile) {
-      const r = cardRef.current.getBoundingClientRect();
-      setRect(r);
-      setExpanding(true);
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => setExpanded(true));
-      });
-      setTimeout(() => onClick(post), 420);
-    } else {
-      onClick(post);
-    }
-  };
-
-  const coverBg = post.coverImage
-    ? `url(${post.coverImage})`
-    : post.topic?.color || '#6c63ff';
-
   return (
     <>
       <div
-        ref={cardRef}
         className={`post-card ${isMobile ? 'mobile' : 'desktop'}`}
-        onClick={handleClick}
+        onClick={() => onClick(post)}
       >
         <div className="card-front">
           <div className="card-image">
@@ -69,29 +45,6 @@ const PostCard = ({ post, onClick, isMobile }) => {
         </div>
       </div>
 
-      {/* Expansion overlay */}
-      {expanding && rect && (
-        <div
-          className={`card-expand-overlay ${expanded ? 'expanded' : ''}`}
-          style={{
-            '--start-top': `${rect.top}px`,
-            '--start-left': `${rect.left}px`,
-            '--start-width': `${rect.width}px`,
-            '--start-height': `${rect.height}px`,
-            '--start-radius': '16px',
-            backgroundImage: post.coverImage ? `url(${post.coverImage})` : undefined,
-            backgroundColor: !post.coverImage ? (post.topic?.color || '#6c63ff') : undefined,
-          }}
-        >
-          <div className={`card-expand-text ${expanded ? 'visible' : ''}`}>
-            <div className="card-expand-badge" style={{ background: post.topic?.color }}>
-              {post.topic?.emoji} {post.topic?.name}
-            </div>
-            <h2 className="card-expand-title">{post.title}</h2>
-            <p className="card-expand-summary">{post.summary}</p>
-          </div>
-        </div>
-      )}
     </>
   );
 };
