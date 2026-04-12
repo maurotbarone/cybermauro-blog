@@ -1,7 +1,7 @@
 services:
   # Backend API Service
   - type: web
-    name: mern-blog-backend
+    name: cybermauro-blog
     runtime: node
     rootDir: backend
     buildCommand: npm install
@@ -14,24 +14,17 @@ services:
       - key: JWT_SECRET
         generateValue: true
       - key: CLIENT_URL
-        fromService:
-          type: web
-          name: mern-blog-frontend
-          property: hostWithScheme
+        value: https://cybermauro-blog-1.onrender.com
 
   # Frontend Static Site
-  - type: web
-    name: mern-blog-frontend
-    runtime: static
+  - type: static
+    name: cybermauro-blog-1
     rootDir: frontend
     buildCommand: npm install && npm run build
     staticPublishPath: ./build
     envVars:
       - key: REACT_APP_API_URL
-        fromService:
-          type: web
-          name: mern-blog-backend
-          property: hostWithScheme
+        value: https://cybermauro-blog.onrender.com
     routes:
       - type: rewrite
         source: /*
