@@ -5,7 +5,7 @@ const User = require('../models/User');
 const { auth } = require('../middleware/auth');
 const router = express.Router();
 
-const generateToken = (id) => sign({ id }, process.env.JWT_SECRET, { expiresIn: '30d' });
+const generateToken = (id) => sign({ id }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
 // Register
 router.post('/register', [

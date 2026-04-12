@@ -25,8 +25,8 @@ router.post('/', adminAuth, async (req, res) => {
   }
 });
 
-// Seed topics (for initial setup)
-router.post('/seed', async (req, res) => {
+// Seed topics (admin only)
+router.post('/seed', adminAuth, async (req, res) => {
   try {
     await Topic.deleteMany({});
     const topics = await Topic.insertMany([

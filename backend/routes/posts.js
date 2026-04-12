@@ -80,7 +80,8 @@ router.put('/:id', auth, async (req, res) => {
     if (!post) return res.status(404).json({ message: 'Post not found' });
     if (post.author.toString() !== req.user._id.toString() && req.user.role !== 'admin')
       return res.status(403).json({ message: 'Not authorized' });
-    const updated = await Post.findByIdAndUpdate(req.params.id, req.body, { new: true })
+    const { title, summary, content, coverImage, topic, tags } = req.body;
+    const updated = await Post.findByIdAndUpdate(req.params.id, { title, summary, content, coverImage, topic, tags }, { new: true })
       .populate('author', 'name avatar').populate('topic', 'name slug emoji color');
     res.json(updated);
   } catch (err) {
@@ -102,17 +103,16 @@ router.delete('/:id', auth, async (req, res) => {
   }
 });
 
-// Seed demo posts
-router.post('/seed/demo', async (req, res) => {
+// Seed demo posts (admin only)
+router.post('/seed/demo', auth, async (req, res) => {
+  if (req.user.role !== 'admin') return res.status(403).json({ message: 'Admin access required' });
   try {
     const Topic = require('../models/Topic');
     const User = require('../models/User');
     const topics = await Topic.find();
     if (!topics.length) return res.status(400).json({ message: 'Seed topics first' });
     let admin = await User.findOne({ role: 'admin' });
-    if (!admin) {
-      admin = await User.create({ name: 'Admin', email: 'admin@blog.com', password: 'admin123', role: 'admin' });
-    }
+    if (!admin) return res.status(400).json({ message: 'No admin user found. Create an admin account first.' });
     const demoPosts = [
       { title: 'Hidden Gems of Tuscany', summary: 'Discover the secret villages and vineyards of one of Italy\'s most beautiful regions.', content: 'Tuscany is famous for its rolling hills, Renaissance art, and world-class wine...', coverImage: 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=800', topic: topics.find(t=>t.slug==='tourism')?._id },
       { title: 'Tokyo on a Budget', summary: 'Explore Japan\'s capital without breaking the bank with these insider tips.', content: 'Tokyo might seem expensive, but there are countless ways to experience this incredible city affordably...', coverImage: 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=800', topic: topics.find(t=>t.slug==='tourism')?._id },

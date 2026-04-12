@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import DOMPurify from 'dompurify';
 import { useParams, useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import Navbar from '../components/Navbar';
@@ -183,7 +184,7 @@ const PostPage = () => {
           {/* Body */}
           <div
             className="post-body"
-            dangerouslySetInnerHTML={{ __html: post.content }}
+            dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.content) }}
           />
 
           {/* Footer actions */}
