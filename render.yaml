@@ -31,7 +31,7 @@ services:
         fromService:
           type: web
           name: mern-blog-backend
-          property: host
+          property: hostWithScheme
     routes:
       - type: rewrite
         source: /*
