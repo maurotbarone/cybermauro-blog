@@ -17,7 +17,7 @@ services:
         fromService:
           type: web
           name: mern-blog-frontend
-          property: host
+          property: hostWithScheme
 
   # Frontend Static Site
   - type: web
