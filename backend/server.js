@@ -10,8 +10,15 @@ const app = express();
 
 // Middleware
 app.use(helmet());
+const allowedOrigins = [
+  process.env.CLIENT_URL,
+  'http://localhost:3000',
+].filter(Boolean);
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:3000',
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) callback(null, true);
+    else callback(new Error('Not allowed by CORS'));
+  },
   credentials: true
 }));
 app.use(express.json({ limit: '10mb' }));
@@ -29,7 +36,7 @@ app.use('/api/categories', require('./routes/categories'));
 app.use('/api/upload', require('./routes/upload'));
 
 // Health check
-app.get('/api/health', (req, res) => res.json({ status: 'OK' }));
+app.get('/api/health', (_req, res) => res.json({ status: 'OK' }));
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI)

@@ -155,8 +155,8 @@ const PostPage = () => {
 
         <div className="post-content-wrap">
           {/* Category */}
-          <div className="post-category" style={{ color: post.category?.color }}>
-            {post.category?.icon} {post.category?.name}
+          <div className="post-category" style={{ color: post.topic?.color }}>
+            {post.topic?.emoji} {post.topic?.name}
           </div>
 
           {/* Title */}

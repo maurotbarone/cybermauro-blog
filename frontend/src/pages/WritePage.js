@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { postsAPI, categoriesAPI, uploadAPI } from '../utils/api';
+import { postsAPI, topicsAPI, uploadAPI } from '../utils/api';
 import Navbar from '../components/Navbar';
 import './WritePage.css';
 
@@ -18,7 +18,7 @@ const WritePage = () => {
     title: '',
     summary: '',
     content: '',
-    category: '',
+    topic: '',
     tags: '',
     status: 'draft',
     image: { url: '', alt: '' }
@@ -31,7 +31,7 @@ const WritePage = () => {
   }, [user, authLoading, navigate]);
 
   useEffect(() => {
-    categoriesAPI.getAll().then(res => setCategories(res.data.categories || []));
+    topicsAPI.getAll().then(res => setCategories(Array.isArray(res.data) ? res.data : res.data.categories || []));
   }, []);
 
   const handleImageUpload = async (e) => {
@@ -112,14 +112,14 @@ const WritePage = () => {
           <div className="form-group">
             <label>Category</label>
             <select
-              value={form.category}
-              onChange={e => setForm(f => ({ ...f, category: e.target.value }))}
+              value={form.topic}
+              onChange={e => setForm(f => ({ ...f, topic: e.target.value }))}
               required
             >
               <option value="">Select a category...</option>
               {categories.map(cat => (
                 <option key={cat._id} value={cat._id}>
-                  {cat.icon} {cat.name}
+                  {cat.emoji} {cat.name}
                 </option>
               ))}
             </select>

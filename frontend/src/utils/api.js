@@ -44,6 +44,11 @@ export const categoriesAPI = {
   delete: (id) => API.delete(`/categories/${id}`),
 };
 
+export const topicsAPI = {
+  getAll: () => API.get('/topics'),
+  create: (data) => API.post('/topics', data),
+};
+
 export const uploadAPI = {
   uploadImage: (formData) => API.post('/upload', formData, {
     headers: { 'Content-Type': 'multipart/form-data' }

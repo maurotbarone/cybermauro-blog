@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Navbar from '../components/Navbar';
 import PostCard from '../components/PostCard';
-import { postsAPI, categoriesAPI } from '../utils/api';
+import { postsAPI, topicsAPI } from '../utils/api';
 import './HomePage.css';
 
 const useIsMobile = () => {
@@ -18,7 +18,7 @@ const useIsMobile = () => {
 const DesktopView = ({ categories, posts, activeCategory, setActiveCategory, loading }) => {
   const filteredPosts = activeCategory === 'all'
     ? posts
-    : posts.filter(p => p.category?._id === activeCategory || p.category?.slug === activeCategory);
+    : posts.filter(p => p.topic?._id === activeCategory || p.topic?.slug === activeCategory);
 
   return (
     <div className="desktop-view">
@@ -42,7 +42,7 @@ const DesktopView = ({ categories, posts, activeCategory, setActiveCategory, loa
             onClick={() => setActiveCategory(cat._id)}
             style={{ '--cat-color': cat.color }}
           >
-            {cat.icon} {cat.name}
+            {cat.emoji} {cat.name}
           </button>
         ))}
       </div>
@@ -78,7 +78,7 @@ const MobileView = ({ categories, posts, loading }) => {
 
   const currentCategory = categories[catIndex] || null;
   const currentPosts = currentCategory
-    ? posts.filter(p => p.category?._id === currentCategory._id || p.category?.slug === currentCategory.slug)
+    ? posts.filter(p => p.topic?._id === currentCategory._id || p.topic?.slug === currentCategory.slug)
     : posts;
 
   useEffect(() => { setPostIndex(0); }, [catIndex]);
@@ -132,7 +132,7 @@ const MobileView = ({ categories, posts, loading }) => {
             style={{ '--cat-color': cat.color }}
             onClick={() => setCatIndex(i)}
           >
-            {cat.icon} {cat.name}
+            {cat.emoji} {cat.name}
           </button>
         ))}
       </div>
@@ -187,10 +187,10 @@ const HomePage = () => {
     const fetchData = async () => {
       try {
         const [catRes, postRes] = await Promise.all([
-          categoriesAPI.getAll(),
+          topicsAPI.getAll(),
           postsAPI.getAll({ limit: 30 })
         ]);
-        setCategories(catRes.data.categories || []);
+        setCategories(Array.isArray(catRes.data) ? catRes.data : catRes.data.categories || []);
         setPosts(postRes.data.posts || []);
       } catch (err) {
         console.error('Failed to load data:', err);
